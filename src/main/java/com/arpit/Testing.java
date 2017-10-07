@@ -54,6 +54,7 @@ public class Testing extends TimerTask {
         }
         timer.cancel();
         timer.purge();
+
         selectedPort.closePort();
         return timerTask.result;
     }

@@ -10,10 +10,12 @@ public class LogFileReader {
 
     void startProcess() throws Exception
     {
-        String path="/home/arpit/Desktop/Alerts.csv";
+        String path="/home/pi/Downloads/Alerts.csv";
 
         FileReader fr = new FileReader(path);
         BufferedReader br = new BufferedReader(fr);
+        Main main = new Main();
+        main.readySMSInstance();
 
         String line="";
         while((line = br.readLine())!=null)
@@ -62,8 +64,6 @@ public class LogFileReader {
             json = objectMapper.writeValueAsString(log);
 
             System.out.println(json);*/
-            Main main = new Main();
-            //main.readySMSInstance();
             main.send(log);
 
         }

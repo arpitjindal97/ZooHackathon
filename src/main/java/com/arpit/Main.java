@@ -72,14 +72,15 @@ public class Main {
 
             String str = "";
             if(log.getName().contains("ALERT"))
-                str="ALERT, ";
+                str="THREAT ALERT, ";
             else {
-                str = "THREAT ALERT, ";
+                str = "ALERT, ";
             }
 
-            str += log.getTime().substring(0,2)+":"+log.getTime().substring(2,4)+", ";
+            str += log.getTime().substring(0,2)+":"+log.getTime().substring(2,4)+" HRS , ";
             str+= log.getLocation()+", ";
-            str+= log.getDescription()+", "
+
+            str += getReaction(log);
 
             for(int i=0;i<array.length;i++) {
                 boolean result = sendSMS.sendOne(array[i], str);
@@ -102,5 +103,23 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    String getReaction(Log log)
+    {
+        String str = log.getName();
+        if(str.equals("CAMERA ALERT"))
+            return log.getDescription()+", Rangers on Alert, Track the intruders";
+        else if(str.equals("GROUND SENSOR ALERT"))
+            return "Sensed some foots, Rangers on Alert, Find who was that";
+        else if(str.equals("RANGER EMERGENCY ALERT"))
+            return "All Units on High Alert, Quick reaction force to track and intercept";
+        else if(str.equals("GATE OPEN SENSOR"))
+            return "Gates opened, Gatekeepers on High Alert, Quickly reach to the Doors";
+        else if(str.equals("WATER HOLE EMPTY"))
+            return "Water pool empty, Care takers on alert, Quickly fill the tank";
+        else if(str.equals("ELEPHANT TRACKER STATIONARY 24 HOURS ALARM"))
+            return "Elephant hasn't moved, Care taker on alert, Find whats the issue";
+        else return "Unknown Alert, All units on alert, Everyone check if everythin is fine";
     }
 }

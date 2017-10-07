@@ -1,6 +1,8 @@
 package com.arpit;
 
 import com.fazecast.jSerialComm.SerialPort;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +15,7 @@ public class SendSMS
 {
     SerialPort selectedPort;
 
+    static Logger log = LoggerFactory.getLogger(SendSMS.class.getName());
     SendSMS()
     {
         SerialPort[] list = SerialPort.getCommPorts();
@@ -20,6 +23,7 @@ public class SendSMS
         for (int i = 0; i < list.length; i++)
         {
             selectedPort = list[i];
+            log.info("Testing port: "+selectedPort.getSystemPortName());
             if (Testing.test(selectedPort))
                 return;
         }

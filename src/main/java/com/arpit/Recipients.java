@@ -1,5 +1,8 @@
 package com.arpit;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class Recipients {
     private String[] rangers,gate_keeper,
             water_keeper,elephant_keeper;
@@ -13,4 +16,14 @@ public class Recipients {
     public String[] getGate_keeper(){return gate_keeper;}
     public String[] getWater_keeper(){return water_keeper;}
     public String[] getElephant_keeper(){return elephant_keeper;}
+
+    public String[] getAll(){
+        ArrayList<String> arrayList =new ArrayList<>();
+
+        arrayList.addAll(Arrays.asList(getRangers()));
+        arrayList.addAll(Arrays.asList(getGate_keeper()));
+        arrayList.addAll(Arrays.asList(getWater_keeper()));
+        arrayList.addAll(Arrays.asList(getElephant_keeper()));
+        return arrayList.toArray(new String[0]);
+    }
 }

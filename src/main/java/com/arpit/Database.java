@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 
 class Database {
-    String path = "database.json";
+    String path = "/home/pi/Downloads/database.json";
 
     String[] getNumber(String log_name) throws IOException {
 
@@ -20,7 +20,12 @@ class Database {
             return recipients.getWater_keeper();
         else if (log_name.equals("ELEPHANT TRACKER STATIONARY 24 HOURS ALARM"))
             return recipients.getElephant_keeper();
-        else
+        else if (log_name.equals("CAMERA ALERT") ||log_name.equals("GROUND SENSOR ALERT")
+                || log_name.equals("RANGER EMERGENCY ALERT"))
             return recipients.getRangers();
+        else
+        {
+            return recipients.getAll();
+        }
     }
 }
