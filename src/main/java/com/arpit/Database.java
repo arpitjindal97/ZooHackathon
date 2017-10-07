@@ -6,7 +6,7 @@ import java.io.File;
 import java.io.IOException;
 
 class Database {
-    String path = "/home/pi/Downloads/database.json";
+    static String path = "/home/pi/Downloads/database.json";
 
     String[] getNumber(String log_name) throws IOException {
 

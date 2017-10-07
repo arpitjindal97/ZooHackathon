@@ -22,30 +22,6 @@ public class Main {
         String pid = rt.getName();
         MDC.put("PID", pid.substring(0, pid.indexOf("@")));
 
-        /*log.info("Starting bot");
-
-        ApiContextInitializer.init();
-
-        TelegramBotsApi botsApi = new TelegramBotsApi();
-
-        log.info("Registering Bots");
-        try
-        {
-            botsApi.registerBot(new MySMSBot());
-        } catch (TelegramApiException e)
-        {
-            e.printStackTrace();
-        }
-
-        log.info("Fetching details from database.json");
-        try
-        {
-            Database.getDetails(args[0]);
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
         //WebController.startServer();*/
 
         processLogFile();

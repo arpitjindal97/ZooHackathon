@@ -1,73 +1,113 @@
 package com.arpit;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
-public class WebController extends Thread
-{
-    static Logger log = LoggerFactory.getLogger(WebController.class.getName());
-    private ServerSocket serverSocket;
+@Controller
+public class WebController {
+    static Logger logger = LoggerFactory.getLogger(WebController.class.getName());
 
-    public WebController(int port) throws IOException
-    {
-        serverSocket = new ServerSocket(port);
-        serverSocket.setSoTimeout(0);
+    @GetMapping("/")
+    public String blank_index() {
+        return "upload";
     }
 
-    public void run()
-    {
-        while (true)
-        {
-            try
-            {
-                System.out.println("Waiting for client on port " +
-                        serverSocket.getLocalPort() + "...");
-                Socket server = serverSocket.accept();
+    @RequestMapping(value = {"/uploadAlerts"}, method = RequestMethod.POST)
+    @ResponseBody
+    public String uploadAlerts(@RequestParam("file") MultipartFile file) {
 
-                log.info("Just connected to " + server.getRemoteSocketAddress());
+        if (!file.isEmpty()) {
+            try {
+                byte[] bytes = file.getBytes();
 
-                PrintWriter out = new PrintWriter(server.getOutputStream());
-                out.println("HTTP/1.1 200 OK");
-                out.println("Content-Type: text/html");
-                out.println("\r\n");
-                out.println("Thank you for connecting to " + server.getLocalSocketAddress()
-                        + "\nGoodbye!");
-                out.flush();
+                // Creating the directory to store file
+                String rootPath = "/home/pi/Downloads";
+                File dir = new File(rootPath);
+                if (!dir.exists())
+                    dir.mkdirs();
 
-                out.close();
-                server.close();
+                // Create the file on server
+                File serverFile = new File(dir.getAbsolutePath() + File.separator + "Alerts.csv");
+                BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+                stream.write(bytes);
+                stream.close();
 
-            } catch (SocketTimeoutException s)
-            {
-                log.info("Socket timed out!");
-                break;
-            } catch (IOException e)
-            {
-                e.printStackTrace();
-                break;
+                logger.info("Server File Location=" + serverFile.getAbsolutePath());
+
+                return "File upload success!";
+            } catch (Exception e) {
+                return "You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage();
             }
+        } else {
+            return "You failed to upload " + file.getOriginalFilename() + " because the file was empty.";
         }
     }
 
-    public static void startServer()
+    @RequestMapping(value = {"/uploadDatabase"}, method = RequestMethod.POST)
+    @ResponseBody
+    public String uploadDatabase(@RequestParam("file") MultipartFile file) {
+
+        if (!file.isEmpty()) {
+            try {
+                byte[] bytes = file.getBytes();
+
+                // Creating the directory to store file
+                String rootPath = "/home/pi/Downloads";
+                File dir = new File(rootPath);
+                if (!dir.exists())
+                    dir.mkdirs();
+
+                // Create the file on server
+                File serverFile = new File(dir.getAbsolutePath() + File.separator + "database.json");
+                BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
+                stream.write(bytes);
+                stream.close();
+
+                logger.info("Server File Location=" + serverFile.getAbsolutePath());
+
+                return "Database file successfully updated";
+            } catch (Exception e) {
+                return "You failed to upload " + file.getOriginalFilename() + " => " + e.getMessage();
+            }
+        } else {
+            return "You failed to upload " + file.getOriginalFilename() + " because the file was empty.";
+        }
+    }
+
+    @RequestMapping(value = {"/getDatabase"}, method = RequestMethod.GET)
+    public void getDatabase(HttpServletResponse response) {
+
+        try {
+            File file = new File(Database.path);
+            FileInputStream fis = new FileInputStream(file);
+            byte[] data = new byte[(int) file.length()];
+            fis.read(data);
+            fis.close();
+
+            String str = new String(data, "UTF-8");
+
+            response.getOutputStream().print(str);
+            response.flushBuffer();
+        } catch (Exception e) {
+        }
+    }
+    @RequestMapping(value = {"/startMessages"}, method = RequestMethod.GET)
+    @ResponseBody
+    public String startMessages()
     {
-        int port = Integer.parseInt((System.getenv("PORT").equals("")?"8080":System.getenv("PORT")));
-
-        try
-        {
-            Thread t = new WebController(port);
-            log.info("Starting Server at Port "+port);
-            t.start();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        Main.processLogFile();
+        return "Messages sent successfully";
     }
+
 }

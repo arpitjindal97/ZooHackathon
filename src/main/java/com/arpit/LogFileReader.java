@@ -34,15 +34,17 @@ public class LogFileReader {
             log.setDate(stringBuilder.substring(0,stringBuilder.indexOf(",")));
             stringBuilder.delete(0,stringBuilder.indexOf(",")+1);
 
-            log.setLocation(stringBuilder.substring(0,stringBuilder.indexOf(",")));
-            stringBuilder.delete(0,stringBuilder.indexOf(",")+1);
+            log.setLocation(stringBuilder.substring(0,stringBuilder.length()));
 
-            if(log.getTime().equals("") || log.getLocation().equals("")||
+            if(log.getTime().equals("") ||
                     log.getDate().equals("") || log.getName().equals(""))
                 continue;
 
             if(log.getName().equals("CAMERA ALERT"))
             {
+                log.setLocation(stringBuilder.substring(0,stringBuilder.indexOf(",")));
+                stringBuilder.delete(0,stringBuilder.indexOf(",")+1);
+
                 log.setDescription(stringBuilder.substring(0,stringBuilder.length()));
                 stringBuilder = new StringBuilder(log.getDescription());
                 int one = stringBuilder.indexOf("\"\"")+2;
@@ -56,6 +58,7 @@ public class LogFileReader {
                 int one = stringBuilder.indexOf("\"\"");
                 stringBuilder.replace(one,one+2,"\"");
             }
+            if(log.getLocation().contains("GPS"))
             log.setLocation(stringBuilder.substring(1,stringBuilder.length()-1));
 
             /*ObjectMapper objectMapper = new ObjectMapper();
